@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjpowernode.crm.settrings.dao.DisValueDao">
+    <!--
+    sql语句增删改查操作有对应的标签
+    <select>查询操作
+    <insert>增加操作
+    <update>更新操作
+    <delete>删除操作
+
+  
+    -->
+    <!--查询value表中所有的数据-->
+    <select id="toDisValue" resultType="DisValue">
+        select * from tbl_dic_value
+    </select>
+
+    <!--根据字典类型编码和字典值对value进行查询-->
+    <select id="valueIfOnly" resultType="DisValue">
+        select * from tbl_dic_value where typeCode = #{typeCode} and value = #{value}
+    </select>
+
+    <!--对表中的数据进行增加的操作-->
+    <insert id="saveDisValue">
+        insert into tbl_dic_value
+        (
+           id,
+           value,
+           text,
+           orderNo,
+           typeCode
+        )
+        values
+        (
+           #{id},
+           #{value},
+           #{text},
+           #{orderNo},
+           #{typeCode}
+        )
+    </insert>
+
+    <!--根据id的唯一标识对value表进行查询操作，返回查询到数据-->
+    <select id="findDisValueByID" resultType="DisValue">
+        select * from tbl_dic_value where id = #{id}
+    </select>
+
+    <!--对value表中的数据进行修改的操作-->
+    <update id="updateDisValue">
+        update tbl_dic_value set value = #{value}, text = #{text},orderNo = #{orderNo} where typeCode = #{typeCode}
+    </update>
+
+    <!--对value表中的数据进行删除的操作-->
+    <delete id="deleteDisValueByID">
+        delete from tbl_dic_value where id in
+        <foreach collection="array" open="(" separator="," close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <!--根据我们type表中的code值，查询我们value表中的数据-->
+    <select id="findDisValueByCode" resultType="DisValue">
+        select * from tbl_dic_value where typeCode = #{code} order by orderNo asc
+    </select>
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjpowernode.crm.settrings.dao.DisTypeDao">
+    <!--
+    sql语句增删改查操作有对应的标签
+    <select>查询操作
+    <insert>增加操作
+    <update>更新操作
+    <delete>删除操作
+
+  
+    -->
+    <!--根据code值，查询是否有重复的，导致无法进行查询-->
+    <select id="saveReuseDisTypeByCode" resultType="DisType">
+        select * from tbl_dic_type where code = #{code}
+    </select>
+
+    <!--查询表中所有的数据-->
+    <select id="toDictionaryType" resultType="DisType">
+        select * from tbl_dic_type
+    </select>
+
+    <!--对表中的数据进行增加的sql语句-->
+    <insert id="saveDistype">
+        insert into tbl_dic_type
+        (
+        code,name,description
+        )
+        values
+        (
+        #{code},#{name},#{description}
+        )
+    </insert>
+
+    <!--根据复选框选中的值得到code，然后通过code查询到所需要修改的数据-->
+    <select id="updateDisTypeByCode" resultType="DisType">
+        select * from tbl_dic_type where code = #{code}
+
+    </select>
+
+    <!--对页面中的数据进行修改的操作-->
+    <!--使用动态sql对数据进行修改的操作-->
+    <update id="updateDistype">
+        update tbl_dic_type
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+
+        </set>
+        where code = #{code}
+    </update>
+
+    <!--对字符表中的数据进行删除的操作,因为数据是一个数组，所以我们需要使用动态sql对数据进行删除的操作-->
+    <delete id="deleteDisTypeByCodes">
+        delete from tbl_dic_type where code in
+        <foreach collection="array" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+    </delete>
+
+
+    <!--查询type表中的code值，来用于value表中的typeCode值的使用-->
+    <select id="toSaveValue" resultType="java.lang.String">
+        select code from tbl_dic_type
+    </select>
+
+</mapper>

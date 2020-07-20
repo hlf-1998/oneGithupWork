@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjpowernode.crm.workbench.dao.ActivityRemarkDao">
+    <!--
+    sql语句增删改查操作有对应的标签
+    <select>查询操作
+    <insert>增加操作
+    <update>更新操作
+    <delete>删除操作
+
+  
+    -->
+    <!--根据前端传递回来的id，查询我们activityRemark表中的数据-->
+    <select id="toActivityRemarkControllerList" resultType="ActivityRemark">
+        select * from tbl_activity_remark where activityId = #{activityId}
+    </select>
+
+    <!--根据前端传递回来的数据，对activityRemark表中进行数据的增加操作-->
+    <insert id="saveActivityRemark">
+        insert into tbl_activity_remark
+        (
+        id,
+        noteContent,
+        createTime,
+        createBy,
+        editTime,
+        editBy,
+        editFlag,
+        activityId
+        )
+        values
+        (
+        #{id},
+        #{noteContent},
+        #{createTime},
+        #{createBy},
+        #{editTime},
+        #{editBy},
+        #{editFlag},
+        #{activityId}
+        )
+    </insert>
+
+    <!--根据前端传递回来的id，对我们数据库进行删除的操作-->
+    <delete id="deleteActivityRemarkById" >
+        delete from tbl_activity_remark where id = #{id}
+    </delete>
+
+    <!--对数据库中的数据进行修改-->
+    <update id="updateActivityRemark">
+        update tbl_activity_remark
+        <set>
+            <if test="noteContent != null and noteContent != ''">
+                noteContent = #{noteContent},
+            </if>
+
+            <if test="editTime != null and editTime != ''">
+                editTime = #{editTime},
+            </if>
+
+            <if test="editBy != null and editBy != ''">
+                editBy = #{editBy},
+            </if>
+
+            <if test="editFlag != null and editFlag != ''">
+                editFlag = #{editFlag},
+            </if>
+
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

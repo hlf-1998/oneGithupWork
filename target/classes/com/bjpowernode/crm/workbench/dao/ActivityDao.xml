@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjpowernode.crm.workbench.dao.ActivityDao">
+    <!--
+    sql语句增删改查操作有对应的标签
+    <select>查询操作
+    <insert>增加操作
+    <update>更新操作
+    <delete>删除操作
+
+  
+    -->
+    <!--查询activity表中所有的数据-->
+    <select id="toActivityIndex" resultType="Activity">
+        select
+        a.id,
+        u.name as owner,
+        a.name,
+        a.startDate,
+        a.endDate,
+        a.cost,
+        a.description,
+        a.createTime,
+        a.createBy
+        from
+        tbl_activity a ,tbl_user u
+        <where>
+            <if test="name != null and name!= ''">
+                and a.name like '%' #{name} '%'
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and a.startDate &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and a.endDate &lt;= #{endDate}
+            </if>
+                and a.owner = u.id and u.id = #{userId}
+        </where>
+
+        limit
+        #{pageNo},#{pageSize}
+
+    </select>
+
+    <!--对activity表进行增加的操作-->
+    <insert id="saveActivityAll">
+        insert into tbl_activity
+        (
+        id,
+        owner,
+        name,
+        startDate,
+        endDate,
+        cost,
+        description,
+        createTime,
+        createBy
+        )
+        values
+        (
+        #{id},
+        #{owner},
+        #{name},
+        #{startDate},
+        #{endDate},
+        #{cost},
+        #{description},
+        #{createTime},
+        #{createBy}
+        )
+    </insert>
+
+    <!--根据用户返回的id值，查询activity表中登录的这位用户的有多少条记录-->
+    <select id="findActivityCount" resultType="java.lang.Long">
+        select count(*) from tbl_activity
+        <where>
+            <if test="name != null and name != ''">
+                and name like '%' #{name} '%'
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and startDate &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and endDate &lt;= #{endDate}
+            </if>
+                and owner = #{userId}
+        </where>
+    </select>
+
+    <!--通过用户传递过来的id数组对数据库进行删除的方法-->
+    <delete id="deleteActivityById">
+        delete from tbl_activity where id in
+        <foreach collection="array" item="a" open="(" close=")" separator=",">
+            #{a}
+        </foreach>
+    </delete>
+
+    <!--通过用户复选框的值，获取的id传递过来对我们的activity表中的数据进行查询的操作-->
+    <select id="saveActivityById" resultType="Activity">
+        select * from tbl_activity where id = #{id}
+    </select>
+
+    <!--对数据库中的数据进行修改的操作-->
+    <update id="deleteActivity">
+        update tbl_activity
+        <set>
+            <if test="owner != null and owner != ''">
+                owner = #{owner},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="startDate != null and startDate != ''">
+                startDate = #{startDate},
+            </if>
+            <if test="endDate != null and endDate != ''">
+                endDate = #{endDate},
+            </if>
+            <if test="cost != null and cost != ''">
+                cost = #{cost},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="editTime != null and editTime != ''">
+                editTime = #{editTime},
+            </if>
+            <if test="editBy != null and editBy != ''">
+                editBy = #{editBy},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <!--查询出activity表中所有的数据-->
+    <select id="findActivityAll" resultType="Activity">
+        select
+        a.id,
+        a.name,
+        a.startDate,
+        a.endDate,
+        u.name as owner
+        from
+        tbl_activity a,tbl_user u
+        where
+        u.id = a.owner
+    </select>
+    
+    
+    <!--根据我们复选框的id值，然后进行数据库的查询操作-->
+    <select id="findActivityAllById" resultType="Activity">
+        select * from tbl_activity where id in 
+        <foreach collection="array" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </select>
+
+    <!--将我们从外部导入的数据上传到我们的数据库中-->
+    <!--以下的sql语句中，我们使用在values()方法后面加,号的方式，将我们的数据都加入到我们数据库中-->
+    <insert id="saveActivityAllXls">
+        insert into tbl_activity
+        (
+        id,
+        owner,
+        name,
+        startDate,
+        endDate,
+        cost,
+        description,
+        createTime,
+        createBy
+        )
+        values
+        <foreach collection="list" item="a" separator=",">
+        (
+        #{a.id},
+        #{a.owner},
+        #{a.name},
+        #{a.startDate},
+        #{a.endDate},
+        #{a.cost},
+        #{a.description},
+        #{a.createTime},
+        #{a.createBy}
+         )
+        </foreach>
+    </insert>
+
+    <!--这里我们是通过前端传递过来的id，来查询我们数据库中对应的数据-->
+    <select id="toDetail" resultType="Activity">
+        select
+
+        a.id,
+        u.name as owner,
+        a.name,
+        a.startDate,
+        a.endDate,
+        a.cost,
+        a.description,
+        a.createTime,
+        a.createBy,
+        a.editTime,
+        a.editBy
+
+         from tbl_activity a,tbl_user u where a.owner = u.id and a.id = #{id}
+    </select>
+
+
+
+    <!--根据页面传递的id值，查询到我们市场活动页面的数据-->
+    <!--在这里我们有四张表有关系:tbl_activity ,tbl_clue ,tbl_user ,tbl_clue_activity_relation
+        我们tbl_activity 存储的是我们市场活动的信息，我们tbl_activity 表和tbl_clue是有关联的，
+        通过的是中间表tbl_clue_activity_relation 存储着我们两张表的唯一标识id建立连接，
+        tbl_activity ,tbl_clue这两张表中的owner都是tbl_user 的唯一标识id，所以在我们进行查询的时候
+        需要将四张表进行关联
+
+    -->
+    <select id="getActivityListById" resultType="Activity">
+        select
+        car.id as relationId,
+        a.name,
+        a.startDate,
+        a.endDate,
+        u.name as owner
+        FROM
+        tbl_activity a,tbl_clue c,tbl_user u,tbl_clue_activity_relation car
+        WHERE
+        car.clueId = c.id
+        AND
+        a.owner = u.id
+        AND
+        car.activityId = a.id
+        AND
+        c.id = #{clueId}
+    </select>
+
+
+</mapper>

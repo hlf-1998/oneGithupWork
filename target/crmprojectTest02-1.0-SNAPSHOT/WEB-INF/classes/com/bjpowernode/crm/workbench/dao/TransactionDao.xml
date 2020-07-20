@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjpowernode.crm.workbench.dao.TransactionDao">
+    <!--
+    sql语句增删改查操作有对应的标签
+    <select>查询操作
+    <insert>增加操作
+    <update>更新操作
+    <delete>删除操作
+
+  
+    -->
+    <select id="getCustomerName" resultType="String">
+        select name from tbl_customer where name like '%' #{name} '%'
+    </select>
+
+
+    <!--查询交易表中的对应id的数据,这张表中的数据和4张表有关联关系，所以需要对五张表进行查询-->
+    <select id="findById" resultType="Tran" >
+        SELECT
+        t.id ,
+        t.money ,
+        t.name ,
+        t.expectedDate ,
+        t.stage ,
+        t.type ,
+        t.source ,
+        t.createBy ,
+        t.createTime ,
+        t.editBy ,
+        t.editTime ,
+        t.description ,
+        t.contactSummary ,
+        t.nextContactTime ,
+        cu.name AS customerId,
+        co.fullname AS contactsId,
+        u.name AS OWNER,
+        a.name AS activityId
+        FROM
+        tbl_tran t , tbl_customer cu , tbl_contacts co , tbl_user u , tbl_activity a
+        WHERE
+        t.id = #{id}
+        AND
+        t.owner = u.id
+        AND
+        t.activityId = a.id
+        AND
+        t.customerId = cu.id
+        AND
+        t.contactsId = co.id
+    </select>
+
+</mapper>

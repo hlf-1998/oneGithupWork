@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjpowernode.crm.workbench.dao.ContactsRemarkDao">
+    <!--
+    sql语句增删改查操作有对应的标签
+    <select>查询操作
+    <insert>增加操作
+    <update>更新操作
+    <delete>删除操作
+
+  
+    -->
+    <insert id="saveContactsRemark">
+        insert into tbl_contacts_remark
+        (
+        id,
+        noteContent,
+        createTime,
+        createBy,
+        editFlag,
+        contactsId
+        )
+        values
+        <foreach collection="list" separator="," item="c">
+            (
+            #{c.id},
+            #{c.noteContent},
+            #{c.createTime},
+            #{c.createBy},
+            #{c.editFlag},
+            #{c.contactsId}
+            )
+        </foreach>
+    </insert>
+
+</mapper>
