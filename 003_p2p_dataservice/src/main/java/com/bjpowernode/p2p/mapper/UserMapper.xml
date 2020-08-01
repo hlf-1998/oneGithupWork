@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bjpowernode.p2p.mapper.UserMapper">
+
+  <!--建立数据库表和实体类的对应关系，用于数据封装-->
+  <resultMap id="BaseResultMap" type="com.bjpowernode.p2p.model.User">
+    <!--主键的对应关系，column表的字段名称，property实体类的属性名称-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+
+    <!--非主键的对应关系-->
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="login_password" jdbcType="VARCHAR" property="loginPassword" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="id_card" jdbcType="VARCHAR" property="idCard" />
+    <result column="add_time" jdbcType="TIMESTAMP" property="addTime" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="header_image" jdbcType="VARCHAR" property="headerImage" />
+  </resultMap>
+
+  <!--抽取sql片段-->
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <!--不用写select * from u_user,直接引用该片段就可以了-->
+  <sql id="Base_Column_List">
+    id, phone, login_password, name, id_card, add_time, last_login_time, header_image
+  </sql>
+  <select id="selectByExample" parameterType="com.bjpowernode.p2p.model.UserExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from u_user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from u_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from u_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.bjpowernode.p2p.model.UserExample">
+    delete from u_user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.bjpowernode.p2p.model.User">
+    insert into u_user (id, phone, login_password, 
+      name, id_card, add_time, 
+      last_login_time, header_image)
+    values (#{id,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, #{loginPassword,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{idCard,jdbcType=VARCHAR}, #{addTime,jdbcType=TIMESTAMP}, 
+      #{lastLoginTime,jdbcType=TIMESTAMP}, #{headerImage,jdbcType=VARCHAR})
+  </insert>
+
+  <!--
+      selectKey要做新增数据后，返回主键
+      keyProperty：映射的实体类的属性名称（主键）
+      keyColumn:数据库表的字段名称（主键）
+      resultType：返回值的类型，主键的类型
+      order：当前这条sql的触发时间，AFTER表示在插入语句之后执行，BEFORE表示在插入语句之前执行
+
+
+      sql：
+      SELECT LAST_INSERT_ID() as id
+      SELECT @@IDENTITY as id
+  -->
+  <insert id="insertSelective" parameterType="com.bjpowernode.p2p.model.User">
+    <selectKey keyProperty="id" resultType="java.lang.Integer" order="AFTER">
+      select @@IDENTITY as id
+    </selectKey>
+    insert into u_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="loginPassword != null">
+        login_password,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="idCard != null">
+        id_card,
+      </if>
+      <if test="addTime != null">
+        add_time,
+      </if>
+      <if test="lastLoginTime != null">
+        last_login_time,
+      </if>
+      <if test="headerImage != null">
+        header_image,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPassword != null">
+        #{loginPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idCard != null">
+        #{idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null">
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoginTime != null">
+        #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="headerImage != null">
+        #{headerImage,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.bjpowernode.p2p.model.UserExample" resultType="java.lang.Long">
+    select count(*) from u_user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update u_user
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.phone != null">
+        phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.loginPassword != null">
+        login_password = #{record.loginPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.idCard != null">
+        id_card = #{record.idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="record.addTime != null">
+        add_time = #{record.addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.lastLoginTime != null">
+        last_login_time = #{record.lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.headerImage != null">
+        header_image = #{record.headerImage,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update u_user
+    set id = #{record.id,jdbcType=INTEGER},
+      phone = #{record.phone,jdbcType=VARCHAR},
+      login_password = #{record.loginPassword,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      id_card = #{record.idCard,jdbcType=VARCHAR},
+      add_time = #{record.addTime,jdbcType=TIMESTAMP},
+      last_login_time = #{record.lastLoginTime,jdbcType=TIMESTAMP},
+      header_image = #{record.headerImage,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.bjpowernode.p2p.model.User">
+    update u_user
+    <set>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPassword != null">
+        login_password = #{loginPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="idCard != null">
+        id_card = #{idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null">
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoginTime != null">
+        last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="headerImage != null">
+        header_image = #{headerImage,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.bjpowernode.p2p.model.User">
+    update u_user
+    set phone = #{phone,jdbcType=VARCHAR},
+      login_password = #{loginPassword,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      id_card = #{idCard,jdbcType=VARCHAR},
+      add_time = #{addTime,jdbcType=TIMESTAMP},
+      last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      header_image = #{headerImage,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.bjpowernode.p2p</groupId>
+    <artifactId>p2p_parent</artifactId>
+    <!--父工程的packaging必须设置成pom文件-->
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>002_p2p_exterface</module>
+        <module>003_p2p_dataservice</module>
+        <module>004_p2p_common</module>
+        <module>005_p2p_web</module>
+    </modules>
+
+    <!--添加springboot的父工程-->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.3.1.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <!--将jdk的环境设置成1.8-->
+        <java.version>1.8</java.version>
+        <spring.boot.starter.version>2.3.2.RELEASE</spring.boot.starter.version>
+        <spring.boot.starter.thymeleaf.version>2.3.2.RELEASE</spring.boot.starter.thymeleaf.version>
+        <spring.boot.starter.web.version>2.3.2.RELEASE</spring.boot.starter.web.version>
+        <spring.boot.starter.test.version>2.3.2.RELEASE</spring.boot.starter.test.version>
+        <spring.boot.starter.data.redis.version>2.3.2.RELEASE</spring.boot.starter.data.redis.version>
+        <dubbo.spring.boot.starter.version>2.0.0</dubbo.spring.boot.starter.version>
+        <zkclient.version>0.10</zkclient.version>
+        <lombok.version>1.18.2</lombok.version>
+        <mybatis.spring.boot.starter.version>2.0.0</mybatis.spring.boot.starter.version>
+        <mysql.connector.java.version>5.1.38</mysql.connector.java.version>
+        <fastjson.version>1.2.36</fastjson.version>
+    </properties>
+
+    <!--
+        创建父工程：
+        1、删除src目录
+        2、将打包方式设置成pom
+        3、添加springboot的父工程
+        4、进行依赖坐标的管理
+    -->
+
+    <!--
+        parent（不需要导入坐标，仅仅进行版本的管理）
+
+        exterface（无需导入坐标）
+        服务器的接口
+        实体类
+
+        dataservice（提供者）
+        dubbo的启动依赖
+        zookeeper的客户端依赖
+        mybatis的启动依赖
+        mysql的驱动依赖
+        mybatis的逆向工程插件
+        redis启动依赖
+        添加exterface的依赖
+        添加common的工具依赖
+
+
+        common（有什么需要的工具，就导入该工具的坐标）
+        工具类
+        常量类
+
+
+        web（消费者）
+        dubbo的启动依赖
+        zookeeper的客户端依赖
+        thymeleaf的启动依赖
+        springmvc的依赖
+        jackson/fastjson的依赖
+        添加exterface的依赖
+
+    -->
+
+    <dependencyManagement>
+        <dependencies>
+            <!--核心依赖-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>${spring.boot.starter.version}</version>
+            </dependency>
+            <!--thymeleaf的启动依赖-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-thymeleaf</artifactId>
+                <version>${spring.boot.starter.thymeleaf.version}</version>
+            </dependency>
+            <!--webmvc的启动依赖-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring.boot.starter.web.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>junit-vintage-engine</artifactId>
+                    </exclusion>
+                </exclusions>
+                <version>${spring.boot.starter.test.version}</version>
+            </dependency>
+
+            <!--redis的启动器依赖-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
+                <version>${spring.boot.starter.data.redis.version}</version>
+            </dependency>
+
+            <!--Dubbo集成springboot框架的起步依赖-->
+            <dependency>
+                <groupId>com.alibaba.spring.boot</groupId>
+                <artifactId>dubbo-spring-boot-starter</artifactId>
+                <version>${dubbo.spring.boot.starter.version}</version>
+            </dependency>
+
+            <!--zookeeper 客户端依赖-->
+            <dependency>
+                <groupId>com.101tec</groupId>
+                <artifactId>zkclient</artifactId>
+                <version>${zkclient.version}</version>
+            </dependency>
+
+            <!--@slf4j 自动化日志对象-->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!--mybatis的启动依赖-->
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis.spring.boot.starter.version}</version>
+            </dependency>
+
+            <!--mysql驱动-->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.connector.java.version}</version>
+            </dependency>
+
+            <!--fastjson-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+
+    <build>
+        <!--加载dao的映射配置文件资源-->
+        <!--如果不配置，那么springboot默认加载的是resources目录-->
+        <resources>
+            <resource>
+                <directory>src/main/java</directory><!--所在的目录-->
+                <includes><!--包括目录下的.properties,.xml文件都会扫描到-->
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>*.xml</include>
+                    <include>*.properties</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+    </build>
+
+</project>

@@ -1,0 +1,25 @@
+#dubbo
+spring:
+  application:
+    name: 005_p2p_web
+  dubbo:
+    registry: zookeeper://192.168.81.128:2181
+
+  #thymeleaf
+  thymeleaf:
+    #关闭缓存
+    cache: false
+    prefix: classpath:/templates
+    suffix: .html
+  #解决post乱码
+  http:
+    encoding:
+      force: true
+      enabled: true
+      charset: UTF-8
+
+#端口和工程名称
+server:
+  port: 8082
+  servlet:
+    context-path: /p2p
